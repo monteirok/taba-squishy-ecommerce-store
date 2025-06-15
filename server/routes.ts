@@ -34,8 +34,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!query) {
         return res.status(400).json({ message: "Search query is required" });
       }
+
+      // Input validation and sanitization
+      if (typeof query !== 'string' || query.length > 100) {
+        return res.status(400).json({ message: "Invalid search query" });
+      }
+
+      // Rate limiting could be added here in production
+      const sanitizedQuery = query.trim();
+      if (sanitizedQuery.length < 1) {
+        return res.status(400).json({ message: "Search query too short" });
+      }
       
-      const products = await storage.searchProducts(query);
+      const products = await storage.searchProducts(sanitizedQuery);
       res.json(products);
     } catch (error) {
       console.error("Error searching products:", error);

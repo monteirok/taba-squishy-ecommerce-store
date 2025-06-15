@@ -12,6 +12,8 @@ import { FloatingSearchButton } from "@/components/search/floating-search-button
 import Home from "@/pages/home";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
+import Categories from "@/pages/categories";
+import About from "@/pages/about";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -20,6 +22,8 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/products" component={Products} />
       <Route path="/products/:id" component={ProductDetail} />
+      <Route path="/categories" component={Categories} />
+      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );
