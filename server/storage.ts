@@ -6,6 +6,7 @@ export interface IStorage {
   getProduct(id: number): Promise<Product | undefined>;
   getProductsByCategory(category: string): Promise<Product[]>;
   getFeaturedProducts(): Promise<Product[]>;
+  searchProducts(query: string): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
   
   // Cart operations
@@ -149,6 +150,22 @@ export class MemStorage implements IStorage {
     return Array.from(this.products.values()).filter(
       product => product.featured
     );
+  }
+
+  async searchProducts(query: string): Promise<Product[]> {
+    if (!query.trim()) {
+      return [];
+    }
+    
+    const searchTerm = query.toLowerCase().trim();
+    return Array.from(this.products.values()).filter(product => {
+      const nameMatch = product.name.toLowerCase().includes(searchTerm);
+      const descriptionMatch = product.description.toLowerCase().includes(searchTerm);
+      const categoryMatch = product.category.toLowerCase().includes(searchTerm);
+      const tagsMatch = product.tags?.some(tag => tag.toLowerCase().includes(searchTerm)) || false;
+      
+      return nameMatch || descriptionMatch || categoryMatch || tagsMatch;
+    });
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {

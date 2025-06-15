@@ -27,6 +27,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Search products
+  app.get("/api/products/search", async (req, res) => {
+    try {
+      const query = req.query.q as string;
+      if (!query) {
+        return res.status(400).json({ message: "Search query is required" });
+      }
+      
+      const products = await storage.searchProducts(query);
+      res.json(products);
+    } catch (error) {
+      console.error("Error searching products:", error);
+      res.status(500).json({ message: "Failed to search products" });
+    }
+  });
+
   // Get products by category
   app.get("/api/products/category/:category", async (req, res) => {
     try {
