@@ -1,7 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { gameStorage } from "./game-storage";
 import { insertCartItemSchema } from "@shared/schema";
+import { insertUserProfileSchema, insertGameScoreSchema } from "@shared/game-schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -189,6 +191,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error clearing cart:", error);
       res.status(500).json({ message: "Failed to clear cart" });
+    }
+  });
+
+  // === GAME API ROUTES ===
+
+  // Get or create user profile
+  app.get("/api/game/profile", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      let profile = await gameStorage.getUserProfile(sessionId);
+      
+      if (!profile) {
+        profile = await gameStorage.createUserProfile({ sessionId });
+      }
+      
+      res.json(profile);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      res.status(500).json({ message: "Failed to fetch user profile" });
+    }
+  });
+
+  // Update user profile
+  app.patch("/api/game/profile", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const updates = req.body;
+      
+      // Validate updates
+      if (typeof updates !== 'object' || updates === null) {
+        return res.status(400).json({ message: "Invalid update data" });
+      }
+      
+      const profile = await gameStorage.updateUserProfile(sessionId, updates);
+      if (!profile) {
+        return res.status(404).json({ message: "User profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      res.status(500).json({ message: "Failed to update user profile" });
+    }
+  });
+
+  // Submit game score
+  app.post("/api/game/score", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const scoreData = insertGameScoreSchema.parse({
+        ...req.body,
+        sessionId,
+      });
+      
+      const score = await gameStorage.addGameScore(scoreData);
+      
+      // Add points to user profile
+      await gameStorage.addPoints(sessionId, scoreData.pointsEarned);
+      
+      res.status(201).json(score);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid score data", errors: error.errors });
+      }
+      console.error("Error submitting game score:", error);
+      res.status(500).json({ message: "Failed to submit game score" });
+    }
+  });
+
+  // Get user high scores
+  app.get("/api/game/scores", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const gameType = req.query.gameType as string;
+      
+      const scores = await gameStorage.getUserHighScores(sessionId, gameType);
+      res.json(scores);
+    } catch (error) {
+      console.error("Error fetching user scores:", error);
+      res.status(500).json({ message: "Failed to fetch user scores" });
+    }
+  });
+
+  // Get leaderboard
+  app.get("/api/game/leaderboard/:gameType", async (req, res) => {
+    try {
+      const { gameType } = req.params;
+      const limit = parseInt(req.query.limit as string) || 10;
+      
+      if (!gameType || gameType.length > 50) {
+        return res.status(400).json({ message: "Invalid game type" });
+      }
+      
+      if (limit < 1 || limit > 100) {
+        return res.status(400).json({ message: "Invalid limit" });
+      }
+      
+      const leaderboard = await gameStorage.getLeaderboard(gameType, limit);
+      res.json(leaderboard);
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      res.status(500).json({ message: "Failed to fetch leaderboard" });
+    }
+  });
+
+  // Get available rewards
+  app.get("/api/game/rewards", async (req, res) => {
+    try {
+      const rewards = await gameStorage.getAvailableRewards();
+      res.json(rewards);
+    } catch (error) {
+      console.error("Error fetching rewards:", error);
+      res.status(500).json({ message: "Failed to fetch rewards" });
+    }
+  });
+
+  // Redeem reward
+  app.post("/api/game/rewards/:id/redeem", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const rewardId = parseInt(req.params.id);
+      
+      if (isNaN(rewardId) || rewardId < 1) {
+        return res.status(400).json({ message: "Invalid reward ID" });
+      }
+      
+      const userReward = await gameStorage.redeemReward(sessionId, rewardId);
+      if (!userReward) {
+        return res.status(400).json({ message: "Unable to redeem reward" });
+      }
+      
+      res.status(201).json(userReward);
+    } catch (error) {
+      console.error("Error redeeming reward:", error);
+      res.status(500).json({ message: "Failed to redeem reward" });
+    }
+  });
+
+  // Get user rewards
+  app.get("/api/game/user-rewards", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const userRewards = await gameStorage.getUserRewards(sessionId);
+      res.json(userRewards);
+    } catch (error) {
+      console.error("Error fetching user rewards:", error);
+      res.status(500).json({ message: "Failed to fetch user rewards" });
     }
   });
 
