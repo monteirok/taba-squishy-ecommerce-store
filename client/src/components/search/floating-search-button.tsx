@@ -7,6 +7,11 @@ import { SearchDialog } from "@/components/search/search-dialog";
 export function FloatingSearchButton() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
+  const handleSearchClick = () => {
+    console.log("Search button clicked");
+    setIsSearchOpen(true);
+  };
+
   return (
     <>
       <motion.div
@@ -23,8 +28,8 @@ export function FloatingSearchButton() {
         whileTap={{ scale: 0.95 }}
       >
         <Button
-          onClick={() => setIsSearchOpen(true)}
-          className="h-14 w-14 rounded-full glass hover:glass-strong transition-all duration-300 shadow-lg hover:shadow-xl"
+          onClick={handleSearchClick}
+          className="h-14 w-14 rounded-full glass hover:glass-strong transition-all duration-300 shadow-lg hover:shadow-xl relative z-10"
           size="lg"
         >
           <motion.div
