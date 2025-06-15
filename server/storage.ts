@@ -26,14 +26,18 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private products: Map<number, Product>;
   private cartItems: Map<number, CartItem>;
+  private wishlistItems: Map<number, WishlistItem>;
   private currentProductId: number;
   private currentCartItemId: number;
+  private currentWishlistItemId: number;
 
   constructor() {
     this.products = new Map();
     this.cartItems = new Map();
+    this.wishlistItems = new Map();
     this.currentProductId = 1;
     this.currentCartItemId = 1;
+    this.currentWishlistItemId = 1;
     this.seedProducts();
   }
 
@@ -250,6 +254,60 @@ export class MemStorage implements IStorage {
     itemsToDelete.forEach(([id]) => {
       this.cartItems.delete(id);
     });
+  }
+
+  // Wishlist operations
+  async getWishlistItems(sessionId: string): Promise<WishlistItemWithProduct[]> {
+    const items = Array.from(this.wishlistItems.values()).filter(
+      item => item.sessionId === sessionId
+    );
+    
+    const itemsWithProducts: WishlistItemWithProduct[] = [];
+    for (const item of items) {
+      const product = this.products.get(item.productId);
+      if (product) {
+        itemsWithProducts.push({ ...item, product });
+      }
+    }
+    
+    return itemsWithProducts;
+  }
+
+  async addToWishlist(insertItem: InsertWishlistItem): Promise<WishlistItem> {
+    // Check if item already exists in wishlist
+    const existingItem = Array.from(this.wishlistItems.values()).find(
+      item => item.productId === insertItem.productId && item.sessionId === insertItem.sessionId
+    );
+
+    if (existingItem) {
+      return existingItem;
+    }
+
+    const id = this.currentWishlistItemId++;
+    const wishlistItem: WishlistItem = { 
+      ...insertItem, 
+      id 
+    };
+    this.wishlistItems.set(id, wishlistItem);
+    return wishlistItem;
+  }
+
+  async removeFromWishlist(sessionId: string, productId: number): Promise<boolean> {
+    const item = Array.from(this.wishlistItems.values()).find(
+      item => item.sessionId === sessionId && item.productId === productId
+    );
+    
+    if (item) {
+      return this.wishlistItems.delete(item.id);
+    }
+    
+    return false;
+  }
+
+  async isInWishlist(sessionId: string, productId: number): Promise<boolean> {
+    return Array.from(this.wishlistItems.values()).some(
+      item => item.sessionId === sessionId && item.productId === productId
+    );
   }
 }
 

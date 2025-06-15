@@ -14,7 +14,7 @@ async function initializeAdminData() {
     }
 
     // Create default admin user
-    const hashedPassword = await bcrypt.hash("admin123", 12);
+    const hashedPassword = await bcrypt.hash("admin", 12);
     await db.insert(adminUsers).values({
       username: "admin",
       email: "admin@example.com",

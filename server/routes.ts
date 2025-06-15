@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { gameStorage } from "./game-storage";
 import { adminStorage } from "./admin-storage";
-import { insertCartItemSchema } from "@shared/schema";
+import { insertCartItemSchema, insertWishlistItemSchema } from "@shared/schema";
 import { insertUserProfileSchema, insertGameScoreSchema } from "@shared/game-schema";
 import { 
   insertSaleSchema, 
@@ -198,6 +198,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error clearing cart:", error);
       res.status(500).json({ message: "Failed to clear cart" });
+    }
+  });
+
+  // === WISHLIST API ROUTES ===
+
+  // Get wishlist items
+  app.get("/api/wishlist", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const wishlistItems = await storage.getWishlistItems(sessionId);
+      res.json(wishlistItems);
+    } catch (error) {
+      console.error("Error fetching wishlist items:", error);
+      res.status(500).json({ message: "Failed to fetch wishlist items" });
+    }
+  });
+
+  // Add item to wishlist
+  app.post("/api/wishlist", async (req, res) => {
+    try {
+      const sessionId = (req as any).sessionID || "default-session";
+      const wishlistItemData = insertWishlistItemSchema.parse({
+        ...req.body,
+        sessionId
+      });
+      
+      const wishlistItem = await storage.addToWishlist(wishlistItemData);
+      res.status(201).json(wishlistItem);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid wishlist item data", 
+          errors: error.errors 
+        });
+      }
+      console.error("Error adding to wishlist:", error);
+      res.status(500).json({ message: "Failed to add item to wishlist" });
+    }
+  });
+
+  // Remove item from wishlist
+  app.delete("/api/wishlist/:productId", async (req, res) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      if (isNaN(productId) || productId < 1) {
+        return res.status(400).json({ message: "Invalid product ID" });
+      }
+      
+      const sessionId = (req as any).sessionID || "default-session";
+      const removed = await storage.removeFromWishlist(sessionId, productId);
+      
+      if (!removed) {
+        return res.status(404).json({ message: "Item not found in wishlist" });
+      }
+      
+      res.json({ message: "Item removed from wishlist" });
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+      res.status(500).json({ message: "Failed to remove item from wishlist" });
+    }
+  });
+
+  // Check if item is in wishlist
+  app.get("/api/wishlist/check/:productId", async (req, res) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      if (isNaN(productId) || productId < 1) {
+        return res.status(400).json({ message: "Invalid product ID" });
+      }
+      
+      const sessionId = (req as any).sessionID || "default-session";
+      const isInWishlist = await storage.isInWishlist(sessionId, productId);
+      
+      res.json({ isInWishlist });
+    } catch (error) {
+      console.error("Error checking wishlist:", error);
+      res.status(500).json({ message: "Failed to check wishlist" });
     }
   });
 

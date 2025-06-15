@@ -1,11 +1,11 @@
-import { Heart, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/liquid-glass/button";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass/liquid-glass-card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/use-cart";
+import { WishlistHeart } from "@/components/wishlist-heart";
 import type { Product } from "@shared/schema";
 
 const formatPrice = (price: string) => {
