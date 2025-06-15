@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Heart, Search, ShoppingBag, Menu, X } from "lucide-react";
+import { Heart, ShoppingBag, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useCart } from "@/hooks/use-cart";
-import { SearchDialog } from "@/components/search/search-dialog";
 
 interface HeaderProps {
   onCartToggle: () => void;
@@ -15,7 +14,6 @@ interface HeaderProps {
 export function Header({ onCartToggle }: HeaderProps) {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { totalItems } = useCart();
 
   const navigation = [
@@ -95,25 +93,6 @@ export function Header({ onCartToggle }: HeaderProps) {
             transition={{ delay: 0.6 }}
           >
             {/* <ThemeToggle /> */}
-
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 10 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsSearchOpen(true)}
-                className="glass hover:glass-strong transition-all duration-300 rounded-lg h-10 w-10 p-0"
-              >
-                <motion.div
-                  whileHover={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Search className="h-4 w-4 text-gray-700 dark:text-gray-300" />
-                </motion.div>
-              </Button>
-            </motion.div>
 
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
@@ -247,11 +226,6 @@ export function Header({ onCartToggle }: HeaderProps) {
           )}
         </AnimatePresence>
       </nav>
-
-      <SearchDialog
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
     </motion.header>
   );
 }

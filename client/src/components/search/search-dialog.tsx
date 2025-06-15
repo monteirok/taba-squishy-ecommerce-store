@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/liquid-glass/button";
 import { ProductCard } from "@/components/product/product-card";
@@ -46,6 +47,10 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
+        <VisuallyHidden>
+          <DialogTitle>Search Products</DialogTitle>
+          <DialogDescription>Search for products by name, description, or category</DialogDescription>
+        </VisuallyHidden>
         <LiquidGlassCard variant="frosted" intensity="medium" className="p-6">
           <div className="flex items-center space-x-4 mb-6">
             <div className="relative flex-1">
