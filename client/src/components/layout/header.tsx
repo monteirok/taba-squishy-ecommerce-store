@@ -26,40 +26,37 @@ export function Header({ onCartToggle }: HeaderProps) {
   ];
 
   return (
-    <motion.header 
+    <motion.header
       className="fixed top-0 left-0 right-0 z-50 glass-strong"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ 
+      transition={{
         type: "spring",
         stiffness: 100,
         damping: 20,
-        duration: 0.8
+        duration: 0.8,
       }}
     >
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link href="/" className="flex items-center space-x-2">
-              <motion.div 
+              <motion.div
                 className="w-10 h-10 liquid-gradient rounded-xl flex items-center justify-center"
-                animate={{ 
+                animate={{
                   rotate: [0, 360],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
+                transition={{
                   rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                  scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                 }}
                 whileHover={{ scale: 1.2, rotate: 180 }}
               >
                 <Heart className="text-white text-lg" fill="currentColor" />
               </motion.div>
-              <motion.span 
+              <motion.span
                 className="text-2xl font-bold text-gray-800 dark:text-white"
                 whileHover={{ scale: 1.05 }}
               >
@@ -92,13 +89,13 @@ export function Header({ onCartToggle }: HeaderProps) {
           </div>
 
           {/* Right Side Actions */}
-          <motion.div 
+          <motion.div
             className="flex items-center space-x-4"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
 
             <motion.div
               whileHover={{ scale: 1.1, rotate: 10 }}
@@ -119,10 +116,7 @@ export function Header({ onCartToggle }: HeaderProps) {
               </Button>
             </motion.div>
 
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -130,14 +124,14 @@ export function Header({ onCartToggle }: HeaderProps) {
                 className="glass hover:glass-strong transition-all duration-300 rounded-lg h-10 w-10 p-0 relative"
               >
                 <motion.div
-                  animate={{ 
+                  animate={{
                     rotate: [0, -5, 5, 0],
-                    y: [0, -1, 0]
+                    y: [0, -1, 0],
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 3,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
                   }}
                   whileHover={{ rotate: [0, -15, 15, 0] }}
                 >
@@ -145,15 +139,15 @@ export function Header({ onCartToggle }: HeaderProps) {
                 </motion.div>
                 <AnimatePresence>
                   {totalItems > 0 && (
-                    <motion.span 
+                    <motion.span
                       className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center"
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
-                      transition={{ 
+                      transition={{
                         type: "spring",
                         stiffness: 500,
-                        damping: 15
+                        damping: 15,
                       }}
                       whileHover={{ scale: 1.2 }}
                     >
@@ -218,10 +212,10 @@ export function Header({ onCartToggle }: HeaderProps) {
               initial={{ opacity: 0, height: 0, y: -20 }}
               animate={{ opacity: 1, height: "auto", y: 0 }}
               exit={{ opacity: 0, height: 0, y: -20 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 200,
-                damping: 20
+                damping: 20,
               }}
             >
               <GlassCard className="mt-4 p-4 md:hidden">
@@ -238,7 +232,9 @@ export function Header({ onCartToggle }: HeaderProps) {
                       <Link
                         href={item.href}
                         className={`px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-white/10 transition-colors ${
-                          location === item.href ? "text-primary bg-white/10" : ""
+                          location === item.href
+                            ? "text-primary bg-white/10"
+                            : ""
                         }`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
@@ -252,10 +248,10 @@ export function Header({ onCartToggle }: HeaderProps) {
           )}
         </AnimatePresence>
       </nav>
-      
-      <SearchDialog 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)} 
+
+      <SearchDialog
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
       />
     </motion.header>
   );
