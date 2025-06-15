@@ -58,6 +58,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products/category/:category", async (req, res) => {
     try {
       const { category } = req.params;
+      
+      // Validate category parameter
+      if (!category || typeof category !== 'string' || category.length > 50) {
+        return res.status(400).json({ message: "Invalid category" });
+      }
+
+      // Whitelist allowed categories
+      const allowedCategories = ['all', 'kawaii', 'stress-relief', 'fidget', 'food', 'therapy', 'sets'];
+      if (!allowedCategories.includes(category)) {
+        return res.status(400).json({ message: "Category not found" });
+      }
+
       const products = await storage.getProductsByCategory(category);
       res.json(products);
     } catch (error) {
@@ -70,7 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      if (isNaN(id)) {
+      if (isNaN(id) || id < 1 || id > 999999) {
         return res.status(400).json({ message: "Invalid product ID" });
       }
       
@@ -124,7 +136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const { quantity } = req.body;
       
-      if (isNaN(id) || typeof quantity !== "number" || quantity < 0) {
+      if (isNaN(id) || id < 1 || typeof quantity !== "number" || quantity < 0 || quantity > 100) {
         return res.status(400).json({ message: "Invalid input" });
       }
       
@@ -152,7 +164,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/cart/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      if (isNaN(id)) {
+      if (isNaN(id) || id < 1) {
         return res.status(400).json({ message: "Invalid cart item ID" });
       }
       
