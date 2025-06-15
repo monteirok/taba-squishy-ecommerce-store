@@ -21,7 +21,7 @@ export function AnimatedNotification({
   isVisible,
   onClose,
   autoClose = true,
-  duration = 5000,
+  duration = 3000,
   position = "top-right"
 }: AnimatedNotificationProps) {
   const icons = {

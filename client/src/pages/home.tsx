@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { ProductGrid } from "@/components/product/product-grid";
 import type { Product } from "@shared/schema";
+import { ButtonShowcase } from "@/components/ui/liquid-glass/liquid-glass-card";
+import { Button as LiquidGlassButton } from "@/components/ui/liquid-glass/button";
 
 export default function Home() {
   const { data: featuredProducts = [], isLoading } = useQuery<Product[]>({
@@ -61,6 +63,7 @@ export default function Home() {
 
   return (
     <div className="pt-24">
+
       {/* Hero Section */}
       <section className="pb-16 px-4">
         <div className="container mx-auto text-center">
@@ -324,52 +327,6 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <GlassCard className="p-6">
-                    <motion.div 
-                      className="w-full h-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 rounded-2xl mb-4"
-                      animate={{
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                      style={{
-                        backgroundSize: "200% 100%"
-                      }}
-                    />
-                    <motion.div 
-                      className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 rounded mb-2"
-                      animate={{
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "linear",
-                        delay: 0.2
-                      }}
-                      style={{
-                        backgroundSize: "200% 100%"
-                      }}
-                    />
-                    <motion.div 
-                      className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 rounded w-3/4"
-                      animate={{
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "linear",
-                        delay: 0.4
-                      }}
-                      style={{
-                        backgroundSize: "200% 100%"
-                      }}
-                    />
-                  </GlassCard>
                 </motion.div>
               ))}
             </motion.div>

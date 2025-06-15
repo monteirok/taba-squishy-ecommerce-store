@@ -19,7 +19,6 @@ export function Header({ onCartToggle }: HeaderProps) {
   const { totalItems } = useCart();
 
   const navigation = [
-    { name: "Home", href: "/" },
     { name: "Products", href: "/products" },
     { name: "Categories", href: "/categories" },
     { name: "About", href: "/about" },

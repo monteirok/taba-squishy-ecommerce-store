@@ -2,11 +2,18 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { Button } from "@/components/ui/liquid-glass/button";
+import { LiquidGlassCard } from "@/components/ui/liquid-glass/liquid-glass-card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@shared/schema";
+
+const formatPrice = (price: string) => {
+  return Number(price).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
 
 interface ProductCardProps {
   product: Product;
@@ -40,24 +47,11 @@ export function ProductCard({ product }: ProductCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ 
-        duration: 0.5,
-        type: "spring",
-        stiffness: 100,
-        damping: 15
-      }}
-      whileHover={{ 
-        y: -8,
-        transition: { 
-          type: "spring", 
-          stiffness: 400, 
-          damping: 25 
-        } 
-      }}
-      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
     >
       <Link href={`/products/${product.id}`}>
-        <GlassCard hover className="overflow-hidden">
+        <LiquidGlassCard variant="frosted" intensity="medium" className="overflow-hidden">
           <div className="relative">
             <motion.img
               src={product.image}
@@ -136,71 +130,87 @@ export function ProductCard({ product }: ProductCardProps) {
               </motion.div>
             </motion.div>
           </div>
-          <motion.div 
-            className="p-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <motion.h3 
-              className="text-lg font-semibold text-gray-800 dark:text-white mb-2"
-              whileHover={{ scale: 1.02 }}
+          <div className="p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="space-y-4"
             >
-              {product.name}
-            </motion.h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-              {product.description}
-            </p>
-            <div className="flex items-center justify-between">
-              <motion.div 
-                className="flex items-center space-x-2"
-                whileHover={{ scale: 1.05 }}
-              >
-                <span className="text-2xl font-bold text-primary">
-                  ${product.price}
-                </span>
-                {hasDiscount && (
-                  <span className="text-gray-400 line-through text-sm">
-                    ${product.originalPrice}
-                  </span>
-                )}
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  onClick={handleAddToCart}
-                  disabled={isAddingToCart || !product.inStock}
-                  className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isAddingToCart ? (
-                    <div className="flex items-center space-x-2">
-                      <motion.div 
-                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      />
-                      <span>Adding...</span>
-                    </div>
-                  ) : !product.inStock ? (
-                    "Out of Stock"
-                  ) : (
-                    <>
-                      <motion.div
-                        whileHover={{ rotate: [0, -10, 10, 0] }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                      </motion.div>
-                      Add to Cart
-                    </>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  {product.name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                  {product.description}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <motion.div
+                    className="text-xl font-bold text-primary"
+                    animate={{ 
+                      scale: hasDiscount ? [1, 1.05, 1] : 1
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    ${formatPrice(product.price)}
+                  </motion.div>
+                  {hasDiscount && (
+                    <motion.div
+                      className="text-sm text-gray-500 line-through"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      ${formatPrice(product.originalPrice!)}
+                    </motion.div>
                   )}
-                </Button>
-              </motion.div>
-            </div>
-          </motion.div>
-        </GlassCard>
+                </div>
+
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart || !product.inStock}
+                    variant="glass-strong"
+                    className="disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isAddingToCart ? (
+                      <div className="flex items-center space-x-2">
+                        <motion.div 
+                          className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                        <span>Adding...</span>
+                      </div>
+                    ) : !product.inStock ? (
+                      "Out of Stock"
+                    ) : (
+                      <>
+                        <motion.div
+                          whileHover={{ rotate: [0, -10, 10, 0] }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                        </motion.div>
+                        Add to Cart
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </LiquidGlassCard>
       </Link>
     </motion.div>
   );

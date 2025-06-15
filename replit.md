@@ -105,7 +105,7 @@ This is a modern e-commerce web application built for selling squishy toys and s
 ### Development Environment
 - **Replit Configuration**: Configured for Node.js 20 with auto-scaling deployment
 - **Hot Reload**: Vite dev server with HMR for frontend development
-- **Port Configuration**: Development server on port 5000, production on port 80
+- **Port Configuration**: Development server on port 3000, production on port 80
 - **Environment**: Development mode with runtime error overlay and source maps
 
 ### Production Build Process
