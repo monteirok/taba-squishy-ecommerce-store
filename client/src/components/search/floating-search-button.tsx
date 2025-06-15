@@ -7,7 +7,9 @@ import { SearchDialog } from "@/components/search/search-dialog";
 export function FloatingSearchButton() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const handleSearchClick = () => {
+  const handleSearchClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log("Search button clicked");
     setIsSearchOpen(true);
   };
@@ -53,7 +55,7 @@ export function FloatingSearchButton() {
 
         {/* Pulsing ring effect */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-primary/30"
+          className="absolute inset-0 rounded-full border-2 border-primary/30 pointer-events-none -z-10"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.7, 0, 0.7],
