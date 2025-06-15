@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
-import { ArrowLeft, Heart, ShoppingCart, Plus, Minus, Star, Shield, Truck } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Plus, Minus, Star, Shield, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/use-cart";
+import { WishlistHeart } from "@/components/wishlist-heart";
 import type { Product } from "@shared/schema";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [isLiked, setIsLiked] = useState(false);
   const { addToCart, isAddingToCart } = useCart();
 
   const { data: product, isLoading, error } = useQuery<Product>({
@@ -137,21 +137,11 @@ export default function ProductDetail() {
               <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
                 {product.name}
               </h1>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsLiked(!isLiked)}
-                className={`glass hover:glass-strong p-2 ${
-                  isLiked 
-                    ? "bg-red-500 text-white hover:bg-red-600" 
-                    : "hover:bg-red-500 hover:text-white"
-                }`}
-              >
-                <Heart 
-                  className="h-5 w-5" 
-                  fill={isLiked ? "currentColor" : "none"}
-                />
-              </Button>
+              <WishlistHeart 
+                productId={product.id} 
+                className="glass hover:glass-strong"
+                size="lg"
+              />
             </div>
 
             <p className="text-gray-600 dark:text-gray-300 text-lg mb-6 leading-relaxed">

@@ -20,7 +20,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
   const { addToCart, isAddingToCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -32,11 +31,7 @@ export function ProductCard({ product }: ProductCardProps) {
     });
   };
 
-  const handleToggleLike = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsLiked(!isLiked);
-  };
+
 
   const hasDiscount = product.originalPrice && parseFloat(product.originalPrice) > parseFloat(product.price);
   const discountPercentage = hasDiscount 
@@ -102,31 +97,11 @@ export function ProductCard({ product }: ProductCardProps) {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Button
-                  variant="ghost"
+                <WishlistHeart 
+                  productId={product.id} 
+                  className="w-10 h-10 glass rounded-full"
                   size="sm"
-                  onClick={handleToggleLike}
-                  className={`w-10 h-10 glass rounded-full p-0 transition-all duration-300 ${
-                    isLiked 
-                      ? "bg-red-500 text-white hover:bg-red-600" 
-                      : "hover:bg-red-500 hover:text-white"
-                  }`}
-                >
-                  <motion.div
-                    animate={isLiked ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-                    transition={{ 
-                      duration: 0.3,
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 15
-                    }}
-                  >
-                    <Heart 
-                      className="h-4 w-4" 
-                      fill={isLiked ? "currentColor" : "none"}
-                    />
-                  </motion.div>
-                </Button>
+                />
               </motion.div>
             </motion.div>
           </div>
