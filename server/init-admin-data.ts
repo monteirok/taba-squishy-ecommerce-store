@@ -7,6 +7,12 @@ async function initializeAdminData() {
   try {
     console.log("Initializing admin data...");
 
+    // Skip database initialization if no database is available
+    if (!db) {
+      console.log("No database available, using memory storage initialization");
+      return;
+    }
+
     // Create default admin user
     const hashedPassword = await bcrypt.hash("admin123", 12);
     await db.insert(adminUsers).values({

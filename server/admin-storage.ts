@@ -82,8 +82,8 @@ export class MemAdminStorage implements IAdminStorage {
         item: data.item,
         qty: data.qty,
         pricePaid: data.pricePaid,
-        pickupDate: data.pickupDate,
-        notes: data.notes,
+        pickupDate: data.pickupDate || null,
+        notes: data.notes || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -107,8 +107,8 @@ export class MemAdminStorage implements IAdminStorage {
         item: data.item,
         pricePaid: data.pricePaid,
         qty: data.qty,
-        dateSold: data.dateSold,
-        notes: data.notes,
+        dateSold: data.dateSold || null,
+        notes: data.notes || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -134,15 +134,15 @@ export class MemAdminStorage implements IAdminStorage {
     inventoryData.forEach((data, index) => {
       const item: InventoryItem = {
         id: this.currentInventoryId++,
-        order: data.order,
-        type: data.type,
+        order: data.order || null,
+        type: data.type || null,
         item: data.item,
         retailPrice: data.retailPrice,
         resellPrice: data.resellPrice,
-        stock: data.stock,
-        status: data.status,
-        track: data.track,
-        notes: data.notes,
+        stock: data.stock || 0,
+        status: data.status || "Available",
+        track: data.track || null,
+        notes: data.notes || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
