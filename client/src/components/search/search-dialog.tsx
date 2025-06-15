@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Loader2 } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/liquid-glass/button";
 import { ProductCard } from "@/components/product/product-card";
@@ -60,14 +58,31 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
-          <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-0 bg-transparent shadow-none">
-            <VisuallyHidden>
-              <div>
-                <h2>Search Products</h2>
-                <p>Search for products by name, description, or category</p>
-              </div>
-            </VisuallyHidden>
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={handleClose}
+        >
+          {/* Backdrop */}
+          <motion.div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          
+          {/* Dialog Content */}
+          <div 
+            className="relative z-10 w-full max-w-[800px] mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sr-only">
+              <h2>Search Products</h2>
+              <p>Search for products by name, description, or category</p>
+            </div>
+            
             <motion.div
               initial={{
                 scale: 0.1,
@@ -96,7 +111,7 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
                 damping: 30,
                 duration: 0.4,
               }}
-              className="w-full max-w-[800px]"
+              className="w-full"
             >
               <LiquidGlassCard variant="frosted" intensity="medium" className="p-6">
                 <div className="flex items-center space-x-4 mb-6">
@@ -238,9 +253,24 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
                     ) : (
                       <motion.div
                         key="results"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ 
+                          opacity: 1, 
+                          scale: 1,
+                          transition: {
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 30,
+                            staggerChildren: 0.08
+                          }
+                        }}
+                        exit={{ 
+                          opacity: 0, 
+                          scale: 0.95,
+                          transition: {
+                            duration: 0.2
+                          }
+                        }}
                         className="grid grid-cols-1 md:grid-cols-2 gap-4"
                       >
                         {products?.map((product, index) => (
@@ -323,8 +353,8 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
                 </div>
               </LiquidGlassCard>
             </motion.div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
