@@ -14,6 +14,8 @@ import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
 import Categories from "@/pages/categories";
 import About from "@/pages/about";
+import Games from "@/pages/games";
+import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +25,8 @@ function Router() {
       <Route path="/products" component={Products} />
       <Route path="/products/:id" component={ProductDetail} />
       <Route path="/categories" component={Categories} />
+      <Route path="/games" component={Games} />
+      <Route path="/admin" component={Admin} />
       <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>

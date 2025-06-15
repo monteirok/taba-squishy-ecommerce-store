@@ -2,8 +2,15 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { gameStorage } from "./game-storage";
+import { adminStorage } from "./admin-storage";
 import { insertCartItemSchema } from "@shared/schema";
 import { insertUserProfileSchema, insertGameScoreSchema } from "@shared/game-schema";
+import { 
+  insertSaleSchema, 
+  insertReservationSchema, 
+  insertInventorySchema,
+  adminLoginSchema
+} from "@shared/admin-schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -338,6 +345,295 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user rewards:", error);
       res.status(500).json({ message: "Failed to fetch user rewards" });
+    }
+  });
+
+  // === ADMIN API ROUTES ===
+
+  // Admin login endpoint
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const loginData = adminLoginSchema.parse(req.body);
+      
+      const isValid = await adminStorage.validateAdminPassword(loginData.username, loginData.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      
+      await adminStorage.updateLastLogin(loginData.username);
+      const user = await adminStorage.getAdminUser(loginData.username);
+      
+      // In a production app, you'd set up proper session management here
+      res.json({ 
+        message: "Login successful", 
+        user: { 
+          id: user?.id, 
+          username: user?.username, 
+          email: user?.email, 
+          role: user?.role 
+        } 
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid login data", errors: error.errors });
+      }
+      console.error("Error during admin login:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Sales endpoints
+  app.get("/api/admin/sales", async (req, res) => {
+    try {
+      const query = req.query.search as string;
+      const sales = query 
+        ? await adminStorage.searchSales(query)
+        : await adminStorage.getSales();
+      res.json(sales);
+    } catch (error) {
+      console.error("Error fetching sales:", error);
+      res.status(500).json({ message: "Failed to fetch sales" });
+    }
+  });
+
+  app.get("/api/admin/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid sale ID" });
+      }
+      
+      const sale = await adminStorage.getSale(id);
+      if (!sale) {
+        return res.status(404).json({ message: "Sale not found" });
+      }
+      
+      res.json(sale);
+    } catch (error) {
+      console.error("Error fetching sale:", error);
+      res.status(500).json({ message: "Failed to fetch sale" });
+    }
+  });
+
+  app.post("/api/admin/sales", async (req, res) => {
+    try {
+      const saleData = insertSaleSchema.parse(req.body);
+      const sale = await adminStorage.createSale(saleData);
+      res.status(201).json(sale);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid sale data", errors: error.errors });
+      }
+      console.error("Error creating sale:", error);
+      res.status(500).json({ message: "Failed to create sale" });
+    }
+  });
+
+  app.patch("/api/admin/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid sale ID" });
+      }
+      
+      const sale = await adminStorage.updateSale(id, req.body);
+      if (!sale) {
+        return res.status(404).json({ message: "Sale not found" });
+      }
+      
+      res.json(sale);
+    } catch (error) {
+      console.error("Error updating sale:", error);
+      res.status(500).json({ message: "Failed to update sale" });
+    }
+  });
+
+  app.delete("/api/admin/sales/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid sale ID" });
+      }
+      
+      const deleted = await adminStorage.deleteSale(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Sale not found" });
+      }
+      
+      res.json({ message: "Sale deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting sale:", error);
+      res.status(500).json({ message: "Failed to delete sale" });
+    }
+  });
+
+  // Reservations endpoints
+  app.get("/api/admin/reservations", async (req, res) => {
+    try {
+      const query = req.query.search as string;
+      const reservations = query 
+        ? await adminStorage.searchReservations(query)
+        : await adminStorage.getReservations();
+      res.json(reservations);
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+      res.status(500).json({ message: "Failed to fetch reservations" });
+    }
+  });
+
+  app.get("/api/admin/reservations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid reservation ID" });
+      }
+      
+      const reservation = await adminStorage.getReservation(id);
+      if (!reservation) {
+        return res.status(404).json({ message: "Reservation not found" });
+      }
+      
+      res.json(reservation);
+    } catch (error) {
+      console.error("Error fetching reservation:", error);
+      res.status(500).json({ message: "Failed to fetch reservation" });
+    }
+  });
+
+  app.post("/api/admin/reservations", async (req, res) => {
+    try {
+      const reservationData = insertReservationSchema.parse(req.body);
+      const reservation = await adminStorage.createReservation(reservationData);
+      res.status(201).json(reservation);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid reservation data", errors: error.errors });
+      }
+      console.error("Error creating reservation:", error);
+      res.status(500).json({ message: "Failed to create reservation" });
+    }
+  });
+
+  app.patch("/api/admin/reservations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid reservation ID" });
+      }
+      
+      const reservation = await adminStorage.updateReservation(id, req.body);
+      if (!reservation) {
+        return res.status(404).json({ message: "Reservation not found" });
+      }
+      
+      res.json(reservation);
+    } catch (error) {
+      console.error("Error updating reservation:", error);
+      res.status(500).json({ message: "Failed to update reservation" });
+    }
+  });
+
+  app.delete("/api/admin/reservations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid reservation ID" });
+      }
+      
+      const deleted = await adminStorage.deleteReservation(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Reservation not found" });
+      }
+      
+      res.json({ message: "Reservation deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting reservation:", error);
+      res.status(500).json({ message: "Failed to delete reservation" });
+    }
+  });
+
+  // Inventory endpoints
+  app.get("/api/admin/inventory", async (req, res) => {
+    try {
+      const query = req.query.search as string;
+      const inventory = query 
+        ? await adminStorage.searchInventory(query)
+        : await adminStorage.getInventory();
+      res.json(inventory);
+    } catch (error) {
+      console.error("Error fetching inventory:", error);
+      res.status(500).json({ message: "Failed to fetch inventory" });
+    }
+  });
+
+  app.get("/api/admin/inventory/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid inventory item ID" });
+      }
+      
+      const item = await adminStorage.getInventoryItem(id);
+      if (!item) {
+        return res.status(404).json({ message: "Inventory item not found" });
+      }
+      
+      res.json(item);
+    } catch (error) {
+      console.error("Error fetching inventory item:", error);
+      res.status(500).json({ message: "Failed to fetch inventory item" });
+    }
+  });
+
+  app.post("/api/admin/inventory", async (req, res) => {
+    try {
+      const itemData = insertInventorySchema.parse(req.body);
+      const item = await adminStorage.createInventoryItem(itemData);
+      res.status(201).json(item);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid inventory data", errors: error.errors });
+      }
+      console.error("Error creating inventory item:", error);
+      res.status(500).json({ message: "Failed to create inventory item" });
+    }
+  });
+
+  app.patch("/api/admin/inventory/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid inventory item ID" });
+      }
+      
+      const item = await adminStorage.updateInventoryItem(id, req.body);
+      if (!item) {
+        return res.status(404).json({ message: "Inventory item not found" });
+      }
+      
+      res.json(item);
+    } catch (error) {
+      console.error("Error updating inventory item:", error);
+      res.status(500).json({ message: "Failed to update inventory item" });
+    }
+  });
+
+  app.delete("/api/admin/inventory/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid inventory item ID" });
+      }
+      
+      const deleted = await adminStorage.deleteInventoryItem(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Inventory item not found" });
+      }
+      
+      res.json({ message: "Inventory item deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting inventory item:", error);
+      res.status(500).json({ message: "Failed to delete inventory item" });
     }
   });
 
