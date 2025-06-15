@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useCart } from "@/hooks/use-cart";
+import { SearchDialog } from "@/components/search/search-dialog";
 
 interface HeaderProps {
   onCartToggle: () => void;
@@ -14,6 +15,7 @@ interface HeaderProps {
 export function Header({ onCartToggle }: HeaderProps) {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { totalItems } = useCart();
 
   const navigation = [
@@ -105,6 +107,7 @@ export function Header({ onCartToggle }: HeaderProps) {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setIsSearchOpen(true)}
                 className="glass hover:glass-strong transition-all duration-300 rounded-lg h-10 w-10 p-0"
               >
                 <motion.div
@@ -249,6 +252,11 @@ export function Header({ onCartToggle }: HeaderProps) {
           )}
         </AnimatePresence>
       </nav>
+      
+      <SearchDialog 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
     </motion.header>
   );
 }

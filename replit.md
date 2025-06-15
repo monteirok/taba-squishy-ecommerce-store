@@ -130,6 +130,15 @@ This is a modern e-commerce web application built for selling squishy toys and s
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+- June 15, 2025: Successfully migrated project from Replit Agent to standard Replit environment
+- June 15, 2025: Implemented comprehensive search functionality with real-time product search
+  - Added searchProducts method to storage interface with fuzzy matching across names, descriptions, categories, and tags
+  - Created search API endpoint at `/api/products/search` with query parameter support
+  - Built SearchDialog component with debounced search, loading states, and animated results
+  - Integrated search functionality into existing header with smooth modal interface
+
 ## Changelog
 
 Changelog:
