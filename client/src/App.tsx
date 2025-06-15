@@ -32,7 +32,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="taba-squishy-theme">
+      <ThemeProvider defaultTheme="system" storageKey="taba-squishy-theme">
         <TooltipProvider>
           <div className="min-h-screen flex flex-col">
             <Header onCartToggle={toggleCart} />

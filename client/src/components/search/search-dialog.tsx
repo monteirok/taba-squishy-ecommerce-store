@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card";
@@ -60,6 +60,9 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
             <Search className="h-5 w-5 text-primary" />
             Search Products
           </DialogTitle>
+          <DialogDescription className="text-gray-600 dark:text-gray-400">
+            Find your perfect squishy toys and stress relief products
+          </DialogDescription>
         </DialogHeader>
 
         <div className="px-6">
