@@ -17,13 +17,24 @@ interface SearchDialogProps {
 
 export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debouncedQuery = useDebounce(searchQuery, 300);
 
-  // Focus input when dialog opens
+  // Focus input when dialog opens and handle animation
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+    if (isOpen) {
+      setIsAnimating(true);
+      // Delay focus to allow animation to start
+      const timer = setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+        setIsAnimating(false);
+      }, 400);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchQuery("");
     }
   }, [isOpen]);
 
@@ -44,14 +55,49 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
     }
   };
 
+  const handleClose = () => {
+    setSearchQuery("");
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-0 bg-transparent shadow-none">
         <VisuallyHidden>
           <DialogTitle>Search Products</DialogTitle>
           <DialogDescription>Search for products by name, description, or category</DialogDescription>
         </VisuallyHidden>
-        <LiquidGlassCard variant="frosted" intensity="medium" className="p-6">
+        <motion.div
+          initial={{
+            scale: 0.1,
+            opacity: 0,
+            x: "calc(100vw - 120px)",
+            y: "calc(100vh - 120px)",
+            borderRadius: "50px",
+          }}
+          animate={{
+            scale: 1,
+            opacity: 1,
+            x: 0,
+            y: 0,
+            borderRadius: "16px",
+          }}
+          exit={{
+            scale: 0.1,
+            opacity: 0,
+            x: "calc(100vw - 120px)",
+            y: "calc(100vh - 120px)",
+            borderRadius: "50px",
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 30,
+            duration: 0.4,
+          }}
+          className="w-full max-w-[800px]"
+        >
+          <LiquidGlassCard variant="frosted" intensity="medium" className="p-6">
           <div className="flex items-center space-x-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -139,7 +185,8 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
               )}
             </AnimatePresence>
           </div>
-        </LiquidGlassCard>
+          </LiquidGlassCard>
+        </motion.div>
       </DialogContent>
     </Dialog>
   );

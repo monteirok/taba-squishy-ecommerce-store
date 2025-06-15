@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { CartSidebar } from "@/components/cart/cart-sidebar";
+import { FloatingSearchButton } from "@/components/search/floating-search-button";
 import Home from "@/pages/home";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
@@ -41,6 +42,7 @@ function App() {
             </main>
             <Footer />
             <CartSidebar isOpen={isCartOpen} onClose={closeCart} />
+            <FloatingSearchButton />
             <Toaster />
           </div>
         </TooltipProvider>
