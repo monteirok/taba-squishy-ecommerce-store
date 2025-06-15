@@ -142,6 +142,12 @@ Preferred communication style: Simple, everyday language.
   - Created animated floating search button with glass morphism effects and pulsing ring animation
   - Fixed accessibility warnings in search dialog with proper titles and descriptions
   - Enhanced user experience with always-visible search access
+- June 15, 2025: Implemented macOS-style search dialog animation
+  - Added authentic macOS app opening animation using Framer Motion
+  - Dialog starts as tiny circle at floating button position and expands with spring physics
+  - Includes coordinated scale, position, and border-radius transformations
+  - Enhanced with staggered product card animations for search results
+  - Maintains proper accessibility while delivering premium user experience
 - June 15, 2025: Implemented comprehensive search functionality with real-time product search
   - Added searchProducts method to storage interface with fuzzy matching across names, descriptions, categories, and tags
   - Created search API endpoint at `/api/products/search` with query parameter support
