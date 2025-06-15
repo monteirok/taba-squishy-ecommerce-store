@@ -312,15 +312,67 @@ export default function Home() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
               {[...Array(8)].map((_, i) => (
-                <GlassCard key={i} className="p-6 animate-pulse">
-                  <div className="w-full h-64 bg-gray-300 dark:bg-gray-700 rounded-2xl mb-4" />
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded mb-2" />
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
-                </GlassCard>
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <GlassCard className="p-6">
+                    <motion.div 
+                      className="w-full h-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 rounded-2xl mb-4"
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                      style={{
+                        backgroundSize: "200% 100%"
+                      }}
+                    />
+                    <motion.div 
+                      className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 rounded mb-2"
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: 0.2
+                      }}
+                      style={{
+                        backgroundSize: "200% 100%"
+                      }}
+                    />
+                    <motion.div 
+                      className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 rounded w-3/4"
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: 0.4
+                      }}
+                      style={{
+                        backgroundSize: "200% 100%"
+                      }}
+                    />
+                  </GlassCard>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
             <ProductGrid products={featuredProducts} />
           )}
@@ -330,30 +382,108 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.h2 
+              className="text-4xl font-bold text-gray-800 dark:text-white mb-4"
+              whileHover={{ scale: 1.02 }}
+            >
               Why Choose Taba Squishy?
-            </h2>
+            </motion.h2>
             <p className="text-gray-600 dark:text-gray-300 text-lg">
               Experience the difference with our premium quality squishies
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             {features.map((feature, index) => (
-              <div key={index} className="text-center">
-                <div className={`w-20 h-20 mx-auto mb-6 liquid-gradient rounded-3xl flex items-center justify-center animate-pulse-slow`} style={{ animationDelay: `${index * 0.5}s` }}>
-                  <feature.icon className="text-white text-3xl" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3">
+              <motion.div 
+                key={index} 
+                className="text-center group"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ 
+                  duration: 0.6,
+                  delay: index * 0.15,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                whileHover={{ 
+                  y: -10,
+                  transition: { 
+                    type: "spring", 
+                    stiffness: 400, 
+                    damping: 25 
+                  } 
+                }}
+              >
+                <motion.div 
+                  className="w-20 h-20 mx-auto mb-6 liquid-gradient rounded-3xl flex items-center justify-center"
+                  whileHover={{ 
+                    scale: 1.1,
+                    rotate: [0, -5, 5, 0],
+                    transition: { 
+                      scale: { type: "spring", stiffness: 300 },
+                      rotate: { duration: 0.4 }
+                    }
+                  }}
+                  animate={{ 
+                    y: [0, -2, 0],
+                    boxShadow: [
+                      "0 4px 15px rgba(0,0,0,0.1)",
+                      "0 8px 25px rgba(0,0,0,0.15)",
+                      "0 4px 15px rgba(0,0,0,0.1)"
+                    ]
+                  }}
+                  transition={{ 
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.5
+                  }}
+                >
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ 
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: index * 0.3
+                    }}
+                  >
+                    <feature.icon className="text-white text-3xl" />
+                  </motion.div>
+                </motion.div>
+                <motion.h3 
+                  className="text-xl font-semibold text-gray-800 dark:text-white mb-3"
+                  whileHover={{ scale: 1.05, color: "rgb(139, 92, 246)" }}
+                >
                   {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                </motion.h3>
+                <motion.p 
+                  className="text-gray-600 dark:text-gray-300"
+                  whileHover={{ scale: 1.02 }}
+                >
                   {feature.description}
-                </p>
-              </div>
+                </motion.p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
