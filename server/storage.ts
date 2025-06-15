@@ -1,4 +1,4 @@
-import { products, cartItems, type Product, type InsertProduct, type CartItem, type InsertCartItem, type CartItemWithProduct } from "@shared/schema";
+import { products, cartItems, wishlistItems, type Product, type InsertProduct, type CartItem, type InsertCartItem, type CartItemWithProduct, type WishlistItem, type InsertWishlistItem, type WishlistItemWithProduct } from "@shared/schema";
 
 export interface IStorage {
   // Product operations
@@ -15,6 +15,12 @@ export interface IStorage {
   updateCartItemQuantity(id: number, quantity: number): Promise<CartItem | undefined>;
   removeFromCart(id: number): Promise<boolean>;
   clearCart(sessionId: string): Promise<void>;
+  
+  // Wishlist operations
+  getWishlistItems(sessionId: string): Promise<WishlistItemWithProduct[]>;
+  addToWishlist(item: InsertWishlistItem): Promise<WishlistItem>;
+  removeFromWishlist(sessionId: string, productId: number): Promise<boolean>;
+  isInWishlist(sessionId: string, productId: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {

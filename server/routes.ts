@@ -350,6 +350,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // === ADMIN API ROUTES ===
 
+  // Admin login page redirect - redirect to frontend admin page
+  app.get("/api/admin/login", (req, res) => {
+    res.redirect("/admin");
+  });
+
   // Admin login endpoint
   app.post("/api/admin/login", async (req, res) => {
     try {
